@@ -1,2 +1,56 @@
-/target/
-/.DS_Store
+# ==========================================
+# OS Generated Files (Mac and Windows)
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ==========================================
+# Recursive Mac
+# ==========================================
+**/._*
+**/.DS_Store
+
+# ==========================================
+# Maven (Build Output)
+# ==========================================
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+build.log
+
+# ==========================================
+# Visual Studio Code (.vscode)
+# ==========================================
+.vscode/
+*.code-workspace
+
+# ==========================================
+# Eclipse IDE
+# ==========================================
+.metadata/
+.classpath
+.project
+.settings/
+*.launch
+*.factorypath
+
+# ==========================================
+# Log and Temporary Files
+# ==========================================
+*.log
+*.tmp
+*.bak
+
+# ==========================================
+# Task pluings
+# ==========================================
+tasks/*
