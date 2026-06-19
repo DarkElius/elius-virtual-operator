@@ -30,7 +30,7 @@ public class VirtualOperatorID {
 	public static String get() {
 		
 		// Returns the name representing the running Java virtual machine + thread name + thread ID
-		return ManagementFactory.getRuntimeMXBean().getName() + " - " + Thread.currentThread().getName() + " - " + Thread.currentThread().getId();
+		return ManagementFactory.getRuntimeMXBean().getName() + " - " + Thread.currentThread().getName() + " - " + Thread.currentThread().threadId();
 		
 	}
 	

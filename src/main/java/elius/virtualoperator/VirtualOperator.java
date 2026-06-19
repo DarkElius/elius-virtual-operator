@@ -29,12 +29,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import elius.virtualoperator.db.DBTables;
+import elius.virtualoperator.task.TaskManager;
 import elius.virtualoperator.task.TaskSubmitter;
 import elius.webapp.framework.properties.PropertiesManager;
 import elius.webapp.framework.properties.PropertiesManagerFactory;
 
 public class VirtualOperator {
-	
+
+    private static VirtualOperator instance;
+
 	// Get logger
 	private static Logger logger = LogManager.getLogger(VirtualOperator.class);
 
@@ -49,7 +52,26 @@ public class VirtualOperator {
 	
 	// Properties file
 	private PropertiesManager appProperties;
+
+	// Task Manager
+	private TaskManager taskManager;
+
+	/**
+	 * Coonstructor
+	 */
+    public VirtualOperator() {
+        instance = this;
+    }
+
+	/**
+	 * Get Virtual Operator instance
+	 * @return Virtual Operator instance
+	 */
+    public static VirtualOperator getInstance() {
+        return instance;
+    }
 	
+
 	/**
 	 * Initialize application
 	 */
@@ -112,6 +134,14 @@ public class VirtualOperator {
 			logger.warn("Scheduler task submission disabled");		
 		}
 		
+		// Load Task Processes (Pluginss)
+		taskManager = new TaskManager();
+		try {
+			taskManager.loadPlugins(appProperties.get(VirtualOperatorAttributes.PROP_TASK_PROCESS_PATH));
+		} catch (Exception e) {
+			logger.catching(e);
+		}
+	
 		// Log initialization
 		logger.info("Operator service initialized");		
 	}
@@ -171,5 +201,14 @@ public class VirtualOperator {
         
 		// Log shutdown
 		logger.info("Operator service terminated");		
+	}
+
+
+	/**
+	 * Get Task Manager 
+	 * @return Task Manager
+	 */
+	public TaskManager getTaskManager() {
+		return taskManager;
 	}
 }

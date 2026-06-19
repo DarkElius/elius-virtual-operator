@@ -68,6 +68,9 @@ public class VirtualOperatorAttributes {
 	// Properties - Number of task to own from queue
 	public static final String PROP_TASK_SUBMITTER_TASK_TO_OWN = "task.submitter.taskToOwn";
 	
+	// Properties - Task Process path where plugin are installed
+	public static final String PROP_TASK_PROCESS_PATH = "task.process.path";
+
 	// Properties - Lock Manager application
 	public static final String PROP_LOCK_MANAGER_APPLICATION = "lock.manager.application";
 	

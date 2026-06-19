@@ -7,21 +7,13 @@ Description
 -----
 The virtual operator is a software that can execute different tasks independently.
 
-By default it has only two tasks, but the user can implement their own class to execute particular actions.
+Tasks are not included in the appliation: you can download them from the repository.
 
-Task types:
-
- * **DEBUG**, used mainly for debugging phase
+Task can be implemented using *Elius Virtual Operator Task* interface available on the reopsitory.
  
- * **SHELL**, used to execute scripts inside a directory set in the evo-shell property file
- 
- * **JOB_SCRIPT**, used to parse script / daemon log in general, search for a message and execute actions
-  
 Requests can be submitted and monitored using http interface.
 
 The software is scalable and can be installed on multiple nodes to better manage high workloads.
-
-This application is powered by Elius WebApp Framework.
 
 
 
@@ -41,9 +33,6 @@ It contains:
  
  * **evo.properties**, the virtual operator generic properties file
 
- 
- * **evo-shell.properties**, the shell type task properties file
-
 
 
 Compilation
@@ -57,7 +46,7 @@ When the Elius WebApp Framework will be stable it'll be released on official Mav
 
 Run
 -----
-This project must be deployed on an application server: I'm currently using Apache Tomcat 10.0.6.
+This project must be deployed on an application server: I'm currently using Apache Tomcat 11.
 
 
 **Parameters**
@@ -141,33 +130,12 @@ To
 
 Create your own task
 -----
-To create your own task please follow this steps:
-
- * Add your task type to *TaskType.java*
- 
-   *GAME(3, "Game");*
-   
- * Create your package
- 
-   *elius.virtualoperator.task.game*
-   
- * Implements the *TaskProcess* class in the previous package
- 
-   *public class GameProcess implements TaskProcess*
-   
- * Modify *run* method inside *TaskExecutor* class
- 
-   *case GAME:*
-
-   *dbTask.updateStatus(task.getUuid(), TaskStatus.RUNNING);*
-
-   *GameProcess gameProcess = new GameProcess();*
-
-   *gameProcess.execute(task);*
-
-   *dbTask.updateResult(task.getUuid(), gameProcess.getTaskStatusResult(), gameProcess.getProcessResult());
-
-   *break;*
+To create your own task 
+  * Download *Elius Virtual Operator Task* interface available on the reopsitory.
+  * Implement the plugin
+  * Copy the jar in the project (i.e.: resources/tasks)
+  * Set the correct path inside *task.process.path* in the *evo.properties*
+  * Copy needed plugin propertie in *resources* directory
 
 
 Road Map
@@ -177,8 +145,7 @@ These are more or less the steps I want to implement in the near future
  * GUI
  
  * Create a virtual operator option to force the node to work only on specify a task type 
- 
- * Evaluate a System Exit method for task extension
+
 
 
 

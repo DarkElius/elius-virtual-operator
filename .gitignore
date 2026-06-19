@@ -51,6 +51,19 @@ build.log
 *.bak
 
 # ==========================================
+# External resources
+# ==========================================
+src/main/resources/*
+
+# ==========================================
+# Keep application resources
+# ==========================================
+!src/main/resources/ewa.properties
+!src/main/resources/evo.properties
+!src/main/resources/log4j2.xml
+
+
+# ==========================================
 # Task pluings
 # ==========================================
-tasks/*
+src/main/resources/tasks/*

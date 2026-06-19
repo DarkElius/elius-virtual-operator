@@ -52,7 +52,7 @@ public class DBTables {
 															+ "  ID CHAR(36) NOT NULL DEFAULT ' '"
 															+ ", DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
 															+ ", STATUS INTEGER NOT NULL DEFAULT 0"
-															+ ", TYPE INTEGER NOT NULL DEFAULT 0"
+															+ ", TYPE VARCHAR(128) NOT NULL DEFAULT ''"
 															+ ", PRIORITY INTEGER NOT NULL DEFAULT 0"
 															+ ", DETAILS VARCHAR(1024) NOT NULL DEFAULT ''"
 															+ ", RESULT VARCHAR(1024) NOT NULL DEFAULT ''"

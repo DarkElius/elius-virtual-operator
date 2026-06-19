@@ -22,12 +22,8 @@ package elius.virtualoperator.task;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import elius.virtualoperator.VirtualOperator;
 import elius.virtualoperator.VirtualOperatorID;
-import elius.virtualoperator.task.debug.DebugProcess;
-import elius.virtualoperator.task.shell.ShellProcess;
-import elius.virtualoperator.task.job.JobProcessBetaSystems;
-import elius.virtualoperator.task.job.JobProcessScript;
-import elius.virtualoperator.task.job.JobType;
 
 public class TaskExecutor implements Runnable {
 
@@ -40,6 +36,8 @@ public class TaskExecutor implements Runnable {
 	// Task pointer
 	Task task;
 	
+	// Task Manger
+	TaskManager taskManager;
 	
 	/**
 	 * Constructor
@@ -51,125 +49,48 @@ public class TaskExecutor implements Runnable {
 		
 		// Task Database instance
 		dbTask = new TaskDatabase();
+
+		// Task Manager
+		taskManager = VirtualOperator.getInstance().getTaskManager();
 	}
 	
 	
 	@Override
 	public void run() {	
 		// Log task information
-		logger.info("Start - Task Id(" + task.getUuid() + ") Status(" + task.getStatus().getName() + ") Type(" + task.getType().getName() + ") Priority(" + task.getPriority().getName() + ") Details(" + task.getDetails() + ")");
+		logger.debug("Start - Task Id(" + task.getUuid() + ") Status(" + task.getStatus().getName() + ") Type(" + task.getType() + ") Priority(" + task.getPriority().getName() + ") Details(" + task.getDetails() + ")");
 
 		// Update task owner with the real thread executor
 		dbTask.updateOwner(task.getUuid(), VirtualOperatorID.get());
 		
-		// Start correct process
-		switch(task.getType()) {
-			case DEBUG:
-				// Update task status
-				dbTask.updateStatus(task.getUuid(), TaskStatus.RUNNING);
+		// Get Task Process for the specified task		
+		TaskProcess taskProcess = (TaskProcess)taskManager.findPlugin(task.getType());
 
-				// Create process instance
-				DebugProcess debugProcess = new DebugProcess();
+		if(null != taskProcess) {
 
-				// Execute task
-				debugProcess.execute(task);
-				
-				// Update message
-				dbTask.updateResult(task.getUuid(), debugProcess.getTaskStatusResult(), debugProcess.getProcessResult());
-				
-				// Update task info for log
-				task.setStatus(debugProcess.getTaskStatusResult());
-				task.setResult(debugProcess.getProcessResult());
+			// Update task status
+			dbTask.updateStatus(task.getUuid(), TaskStatus.RUNNING);
 
+			// Execute task
+			taskProcess.execute(task);
 
-				break;
+			// Update task info for log
+			task.setStatus(taskProcess.getTaskStatusResult());
+			task.setResult(taskProcess.getProcessResult());
 
-			case SHELL:
-				// Update task status
-				dbTask.updateStatus(task.getUuid(), TaskStatus.RUNNING);
-
-				// Create shell instance
-				ShellProcess shellProcess = new ShellProcess();
-
-				// Execute task
-				shellProcess.execute(task);
-				
-				// Update message
-				dbTask.updateResult(task.getUuid(), shellProcess.getTaskStatusResult(), shellProcess.getProcessResult());
-						
-				// Update task info for log
-				task.setStatus(shellProcess.getTaskStatusResult());
-				task.setResult(shellProcess.getProcessResult());
-
-				break;	
-				
-			case JOB_SCRIPT:
-				// Update task status
-				dbTask.updateStatus(task.getUuid(), TaskStatus.RUNNING);
-
-				// Create shell instance
-				JobProcessScript jobProcess = new JobProcessScript();
-
-				// Execute task
-				jobProcess.execute(task);
-				
-				// Update message
-				dbTask.updateResult(task.getUuid(), jobProcess.getTaskStatusResult(), jobProcess.getProcessResult());
-				
-				// Update task info for log
-				task.setStatus(jobProcess.getTaskStatusResult());
-				task.setResult(jobProcess.getProcessResult());
-						
-				break;	
-				
-			case JOB_BETASYSTEMS_OPEN:
-				// Update task status
-				dbTask.updateStatus(task.getUuid(), TaskStatus.RUNNING);
-
-				// Create shell instance
-				JobProcessBetaSystems jobProcessBetaSystemsOpen = new JobProcessBetaSystems(JobType.OPEN);
-
-				// Execute task
-				jobProcessBetaSystemsOpen.execute(task);
-				
-				// Update message
-				dbTask.updateResult(task.getUuid(), jobProcessBetaSystemsOpen.getTaskStatusResult(), jobProcessBetaSystemsOpen.getProcessResult());
-				
-				// Update task info for log
-				task.setStatus(jobProcessBetaSystemsOpen.getTaskStatusResult());
-				task.setResult(jobProcessBetaSystemsOpen.getProcessResult());
-						
-				break;		
+		} else {
 			
-			case JOB_BETASYSTEMS_MAINFRAME:
-				// Update task status
-				dbTask.updateStatus(task.getUuid(), TaskStatus.RUNNING);
+			// Unable to process task
+			task.setStatus(TaskStatus.ERROR);
+			task.setResult("No Task Process found");
 
-				// Create shell instance
-				JobProcessBetaSystems jobProcessBetaSystemsMainframe = new JobProcessBetaSystems(JobType.MAINFRAME);
-
-				// Execute task
-				jobProcessBetaSystemsMainframe.execute(task);
-				
-				// Update message
-				dbTask.updateResult(task.getUuid(), jobProcessBetaSystemsMainframe.getTaskStatusResult(), jobProcessBetaSystemsMainframe.getProcessResult());
-				
-				// Update task info for log
-				task.setStatus(jobProcessBetaSystemsMainframe.getTaskStatusResult());
-				task.setResult(jobProcessBetaSystemsMainframe.getProcessResult());
-						
-				break;		
-			
-			default:
-				// Log error message for missing process
-				logger.error("Undefined process for task type " + task.getType().getName());
-				
-				// Update task status
-				dbTask.updateStatus(task.getUuid(), TaskStatus.ERROR);
 		}
 
+		// Update message
+		dbTask.updateResult(task.getUuid(), task.getStatus(), task.getResult());
+
 		// Log end task
-		logger.debug("End - Task Id(" + task.getUuid() + ") Status(" + task.getStatus().getName() + ") Result(" + task.getResult() + ") Type(" + task.getType().getName() + ") Priority(" + task.getPriority().getName() + ") Details(" + task.getDetails() + ")");
+		logger.debug("End - Task Id(" + task.getUuid() + ") Status(" + task.getStatus().getName() + ") Result(" + task.getResult() + ") Type(" + task.getType() + ") Priority(" + task.getPriority().getName() + ") Details(" + task.getDetails() + ")");
 
 	}
 

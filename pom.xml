@@ -18,8 +18,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-          <source>11</source>
-          <target>11</target>
+          <release>21</release>
         </configuration>
       </plugin>
       <plugin>
@@ -31,7 +30,7 @@
   <properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<ewaf.version>0.0.1-SNAPSHOT</ewaf.version>
+		<ewaf.version>0.0.1</ewaf.version>
 		<log4j.version>2.18.0</log4j.version>
 		<h2.version>2.2.224</h2.version>
 		<jackson.version>2.16.1</jackson.version>
@@ -47,8 +46,15 @@
 		<dependency>
 			<groupId>EliusWebAppFramework</groupId>
 			<artifactId>EliusWebAppFramework</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
+
+		<!-- Elius Virtual Operator Task -->
+		<dependency>
+			<groupId>EliusVirtualOperator</groupId>
+			<artifactId>Task</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>  		
 
 		<!-- Logging -->
 		<dependency>
@@ -69,6 +75,12 @@
 		    <version>${h2.version}</version>
 		    <scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+			<version>10.16.1.1</version>
+			<scope>runtime</scope>
+		</dependency>		
 		
 		<!-- Json to java object -->
 		<dependency>

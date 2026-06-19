@@ -80,11 +80,11 @@ public class TaskDatabase {
 	 */
 	public int add(Task task) {
 		// Log add task
-		logger.debug("Add task(" + task.getUuid().toString() + ")");
+		logger.trace("Add task(" + task.getUuid().toString() + ")");
 
 		// Check the number of rows inserted
 		if (db.update(SQL_INSERT, task.getUuid().toString(), task.getStatus().getId(),
-				task.getType().getId(), task.getPriority().getId(), task.getDetails(), task.getRequester(), task.getOwner()) > 0) {
+				task.getType(), task.getPriority().getId(), task.getDetails(), task.getRequester(), task.getOwner()) > 0) {
 			// Log the error
 			logger.error("No rows inserted");
 			// Return error
@@ -105,7 +105,7 @@ public class TaskDatabase {
 	 */
 	public int own(UUID uuid, TaskStatus status, String owner) {
 		// Log update task
-		logger.debug("Update task(" + uuid + ") set status(" + status.getName() + ") owner(" + owner + ")");
+		logger.trace("Update task(" + uuid + ") set status(" + status.getName() + ") owner(" + owner + ")");
 
 		// Check the number of rows updated
 		if (db.update(SQL_UPDATE_OWN, status.getId(), owner, uuid.toString()) > 0) {
@@ -128,7 +128,7 @@ public class TaskDatabase {
 	 */
 	public int updateOwner(UUID uuid, String owner) {
 		// Log update task
-		logger.debug("Update task(" + uuid + ") set owner(" + owner + ")");
+		logger.trace("Update task(" + uuid + ") set owner(" + owner + ")");
 
 		// Check the number of rows updated
 		if (db.update(SQL_UPDATE_OWNER, owner, uuid.toString()) > 0) {
@@ -151,7 +151,7 @@ public class TaskDatabase {
 	 */
 	public int updateStatus(UUID uuid, TaskStatus status) {
 		// Log update task
-		logger.debug("Update task(" + uuid + ") set status(" + status.getName() + ")");
+		logger.trace("Update task(" + uuid + ") set status(" + status.getName() + ")");
 
 		// Check the number of rows updated
 		if (db.update(SQL_UPDATE_STATUS, status.getId(), uuid.toString()) > 0) {
@@ -175,7 +175,7 @@ public class TaskDatabase {
 	 */
 	public int updateResult(UUID uuid, TaskStatus status, String result) {
 		// Log update task
-		logger.debug("Update task(" + uuid + ") set status(" + status.getName() + ") result(" + result + ")");
+		logger.trace("Update task(" + uuid + ") set status(" + status.getName() + ") result(" + result + ")");
 			
 		// Check the update result
 		if (db.update(SQL_UPDATE_RESULT, status.getId(), result, uuid.toString()) > 0) {
@@ -217,7 +217,7 @@ public class TaskDatabase {
 	 */
  	private List<Task> get(String sql, int nTasks) {
 		// Log add task
-		logger.debug("Get task");
+		logger.trace("Get task");
 
 		// Result table
 		List<Map<String, Object>> table = db.executeQuery(sql, nTasks);
@@ -245,7 +245,7 @@ public class TaskDatabase {
 			// Set task status
 			t.setStatus(TaskStatus.getById((int)tableRow.get("STATUS")));
 			// Set task type
-			t.setType(TaskType.getById((int)tableRow.get("TYPE")));
+			t.setType((String)tableRow.get("TYPE"));
 			// Set task priority
 			t.setPriority(TaskPriority.getById((int)tableRow.get("PRIORITY")));
 			// Set task details
