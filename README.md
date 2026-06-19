@@ -7,7 +7,7 @@ Description
 -----
 The virtual operator is a software that can execute different tasks independently.
 
-Tasks are not included in the appliation: you can download them from the repository.
+Tasks are not included in the application: you can download them from the repository.
 
 Task can be implemented using *Elius Virtual Operator Task* interface available on the reopsitory.
  
@@ -37,9 +37,9 @@ It contains:
 
 Compilation
 -----
-To compile this project you need to compile and install the Elius WebApp Framework on your local Maven repository.
+To compile this project you need to compile and install the *Elius WebApp Framework* on your local Maven repository.
 
-When the Elius WebApp Framework will be stable it'll be released on official Maven repository.
+When the *Elius WebApp Framework* will be stable it'll be released on official Maven repository.
 
 
 
@@ -94,13 +94,13 @@ API
 
 **Tasks**
 
-* Add a DEBUG task
+* Add a EVO_DEBUG task
   
-  *curl -X PUT -d '{"status": 1, "type": 1, "priority": 1, "details": "nothing", "requester": "generic", "owner": "foo"}' http://localhost:8080/EliusVirtualOperator/api/evo/task  --header "Content-Type:application/json"*
+  *curl -X PUT -d '{"status": "NEW", "type": "EVO_DEBUG", "priority": "LOW", "details": "nothing", "requester": "generic", "owner": "foo"}' http://localhost:8080/EliusVirtualOperator/api/evo/task  --header "Content-Type:application/json"*
   
 * Add a SHELL task
 
-  *curl -X PUT -d '{"status": 1, "type": 2, "priority": 1, "details": "test.sh", "requester": "generic", "owner": "foo"}' http://localhost:8080/EliusVirtualOperator/api/evo/task  --header "Content-Type:application/json"*
+  *curl -X PUT -d '{"status": "NEW", "type": "EVO_SHELL", "priority": "LOW", "details": "test.sh", "requester": "generic", "owner": "foo"}' http://localhost:8080/EliusVirtualOperator/api/evo/task  --header "Content-Type:application/json"*
   
   *test.sh* must be present in the directory specified in the *evo-shell.txt* property file under label *task.shell.scripts.path*
 
@@ -133,7 +133,7 @@ Create your own task
 To create your own task 
   * Download *Elius Virtual Operator Task* interface available on the reopsitory.
   * Implement the plugin
-  * Copy the jar in the project (i.e.: resources/tasks)
+  * Copy the jar in the project (i.e.: *resources/tasks*)
   * Set the correct path inside *task.process.path* in the *evo.properties*
   * Copy needed plugin propertie in *resources* directory
 
