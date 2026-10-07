@@ -1,38 +1,96 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>EliusVirtualOperator</groupId>
-  <artifactId>EliusVirtualOperator</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <packaging>war</packaging>
-  <build>
-    <resources>
-      <resource>
-        <directory>src/main/java</directory>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </resource>
-    </resources>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
-        <configuration>
-          <release>21</release>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>3.2.3</version>
-      </plugin>
-    </plugins>
-  </build>
-  <properties>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>EliusVirtualOperator</groupId>
+	<artifactId>EliusVirtualOperator</artifactId>
+	<version>0.0.2</version>
+
+	<build>
+		<plugins>
+			<!-- Compiler -->
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.15.0</version>
+				<configuration>
+					<release>21</release>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.6.2</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<!-- Fat-JAR with all dependencies -->
+							<shadedArtifactAttached>false</shadedArtifactAttached>
+
+							<!-- Remove external libraries signatures to avoid SecurityException
+							errors -->
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+
+							<!-- Set main class -->
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>elius.virtualoperator.VirtualOperatorMain</mainClass>
+								</transformer>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+							</transformers>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- NOTICE -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>2.4.0</version>
+
+				<configuration>
+					<thirdPartyFilename>NOTICE</thirdPartyFilename>
+					<excludedScopes>test,provided</excludedScopes>
+					<fileTemplate>
+						${project.basedir}/src/main/resources/license/third-party-template.ftl</fileTemplate>
+					<outputDirectory>${project.basedir}</outputDirectory>
+				</configuration>
+
+				<executions>
+					<execution>
+						<id>generate-notice</id>
+						<goals>
+							<goal>add-third-party</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<ewaf.version>0.0.1</ewaf.version>
-		<log4j.version>2.18.0</log4j.version>
-		<h2.version>2.2.224</h2.version>
+		<ewaf.version>0.0.2</ewaf.version>
+		<evot.version>0.0.2</evot.version>
+		<log4j.version>2.26.0</log4j.version>
+		<derby.version>10.16.1.1</derby.version>
 		<jackson.version>2.16.1</jackson.version>
 		<jakarta.version>6.0.0</jakarta.version>
 		<json.version>20240303</json.version>
@@ -46,77 +104,71 @@
 		<dependency>
 			<groupId>EliusWebAppFramework</groupId>
 			<artifactId>EliusWebAppFramework</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
+			<version>${ewaf.version}</version>
 		</dependency>
 
 		<!-- Elius Virtual Operator Task -->
 		<dependency>
 			<groupId>EliusVirtualOperator</groupId>
 			<artifactId>Task</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>  		
+			<version>${evot.version}</version>
+		</dependency>
 
 		<!-- Logging -->
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-api</artifactId>
-			<version>${log4j.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 			<version>${log4j.version}</version>
 		</dependency>
-		
-		<!-- H2 DB -->
+		<!-- SLF4J Log4j2 -->
 		<dependency>
-		    <groupId>com.h2database</groupId>
-		    <artifactId>h2</artifactId>
-		    <version>${h2.version}</version>
-		    <scope>provided</scope>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j2-impl</artifactId>
+			<version>${log4j.version}</version>
 		</dependency>
+
+		<!-- Apache Derby DB -->
 		<dependency>
 			<groupId>org.apache.derby</groupId>
 			<artifactId>derby</artifactId>
-			<version>10.16.1.1</version>
+			<version>${derby.version}</version>
 			<scope>runtime</scope>
-		</dependency>		
-		
+		</dependency>
+
 		<!-- Json to java object -->
 		<dependency>
-		    <groupId>com.fasterxml.jackson.dataformat</groupId>
-		    <artifactId>jackson-dataformat-xml</artifactId>
-		    <version>${jackson.version}</version>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+			<version>${jackson.version}</version>
 		</dependency>
-	
-		<!-- Jakarta Servlet Http, only for compilation -->		
+
+		<!-- Jakarta Servlet Http -->
 		<dependency>
 			<groupId>jakarta.servlet</groupId>
 			<artifactId>jakarta.servlet-api</artifactId>
 			<version>${jakarta.version}</version>
-			<scope>provided</scope>
 		</dependency>
-		
+
 		<!-- JSON -->
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>${json.version}</version>
 		</dependency>
-		
+
 		<!-- StringUtils -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>${commons-lang3.version}</version>
 		</dependency>
-		
+
 		<!-- Escape HTML -->
 		<dependency>
-		    <groupId>org.apache.commons</groupId>
-		    <artifactId>commons-text</artifactId>
-		    <version>${commons-text.version}</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-text</artifactId>
+			<version>${commons-text.version}</version>
 		</dependency>
-		
+
 	</dependencies>
 </project>

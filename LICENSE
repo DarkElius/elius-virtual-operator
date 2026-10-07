@@ -200,27 +200,3 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-   
-
-   THIRD-PARTY LIBRARIES
-
-   This product bundles Elius WebApp Framework, which is available under a "Apache 2.0" license.
-   For details, see https://github.com/DarkElius/Elius-WebApp-Framework/blob/master/LICENSE
-
-   This product bundles Apache Log4j 2 for Java version 2.18.0, which is available under a "Apache 2.0" license.
-   For details, see https://github.com/apache/logging-log4j2/blob/2.x/LICENSE.txt
- 
-   This product bundles Apache Derby version 10.16.1.1, which is available under a "Apache 2.0" license.
-   For details, see https://github.com/apache/derby/blob/trunk/LICENSE
-
-   This product bundles Jackson version 2.16.1, which is available under a "Apache 2.0" license.
-   For details, see https://github.com/FasterXML/jackson
-   
-   This product bundles JSON-java version 20240303, which is available under a public domain license
-   For details, see https://github.com/stleary/JSON-java?tab=License-1-ov-file#readme
-
-   This product bundles Apache Commons Lang version 3.14.0, which is available under a "Apache 2.0" license.
-   For details, see https://commons.apache.org/proper/commons-lang
-	
-   This product bundles Apache Commons Text version 1.11.0, which is available under a "Apache 2.0" license.
-   For details, see https://commons.apache.org/proper/commons-text

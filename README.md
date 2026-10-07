@@ -106,7 +106,7 @@ API
 
 * Get all tasks
 
-  *curl http://localhost:8080/EliusVirtualOperator/api/evo/task*
+  *curl http://localhost:8080/api/evo/task*
   
 **Management**
   

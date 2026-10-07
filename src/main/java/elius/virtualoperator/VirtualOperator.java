@@ -1,21 +1,16 @@
-/**
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
-    
-      http://www.apache.org/licenses/LICENSE-2.0
-    
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
-*/
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package elius.virtualoperator;
 
@@ -31,10 +26,14 @@ import org.apache.logging.log4j.Logger;
 import elius.virtualoperator.db.DBTables;
 import elius.virtualoperator.task.TaskManager;
 import elius.virtualoperator.task.TaskSubmitter;
+import elius.webapp.framework.application.ApplicationLifecycle;
+import elius.webapp.framework.db.DBEngine;
 import elius.webapp.framework.properties.PropertiesManager;
 import elius.webapp.framework.properties.PropertiesManagerFactory;
 
-public class VirtualOperator {
+import javax.sql.DataSource;
+
+public class VirtualOperator implements ApplicationLifecycle {
 
     private static VirtualOperator instance;
 
@@ -56,11 +55,19 @@ public class VirtualOperator {
 	// Task Manager
 	private TaskManager taskManager;
 
+
+	// Database
+    private final DBEngine dbEngine = new DBEngine();
+    private static DataSource dataSource;	
+
 	/**
 	 * Coonstructor
 	 */
     public VirtualOperator() {
         instance = this;
+		
+		// Application properties
+		appProperties = PropertiesManagerFactory.getInstance(VirtualOperatorAttributes.EVO_PROPERTIES_FILE);		
     }
 
 	/**
@@ -70,17 +77,32 @@ public class VirtualOperator {
     public static VirtualOperator getInstance() {
         return instance;
     }
-	
 
 	/**
-	 * Initialize application
+	 * Static global get datasource 
+	 * @return DB Datasource
 	 */
-	public void initialization() {
+    public static DataSource getDataSource() {
+        return dataSource;
+    }	
+
+    @Override
+    public void onStartup() throws Exception {
 		// Log initialization
-		logger.debug("Operator service initialization");
-		
-		// Application properties
-		appProperties = PropertiesManagerFactory.getInstance(VirtualOperatorAttributes.EVO_PROPERTIES_FILE);
+		logger.debug("Virtual Operator initialization...");
+
+		// Load database information
+		String dsUrl = appProperties.get(VirtualOperatorAttributes.PROP_DATABASE_DATASOURCE_URL);
+		String dsUsername = appProperties.get(VirtualOperatorAttributes.PROP_DATABASE_DATASOURCE_USERNAME);
+		String dsPassword = appProperties.get(VirtualOperatorAttributes.PROP_DATABASE_DATASOURCE_PASSWORD);
+		int dsMaxPoolSize = appProperties.getInt(VirtualOperatorAttributes.PROP_DATABASE_DATASOURCE_MAXPOOLSIZE, VirtualOperatorAttributes.DEFAULT_DATABASE_DATASOURCE_MAXPOOLSIZE);
+
+        dataSource = dbEngine.createPool(
+            dsUrl,
+            dsUsername, 
+            dsPassword, 
+            dsMaxPoolSize
+        );
 		
 		// Initialize database (drop/create) if required
 		if("Y".equalsIgnoreCase(appProperties.get(VirtualOperatorAttributes.PROP_DATABASE_INIT_ON_BOOT))) {
@@ -143,19 +165,17 @@ public class VirtualOperator {
 		}
 	
 		// Log initialization
-		logger.info("Operator service initialized");		
+		logger.info("Virtual Operator initialized");		
 	}
 	
 	
-	/**
-	 * Destroy application
-	 */
-	public void destroy() {
+    @Override
+    public void onShutdown() throws Exception {
 		// Log shutdown
-		logger.debug("Operator service shutdown");
+		logger.debug("Virtual Operator shutdown...");
 
 		// Log scheduler shutdown
-		logger.debug("Shutdown scheduler");
+		logger.debug("Scheduler shutdown...");
 		
 		// Verify scheduler status
 		if(null != scheduler) {
@@ -180,7 +200,7 @@ public class VirtualOperator {
 
 
 		// Log scheduler shutdown
-		logger.debug("Shutdown task executor");
+		logger.debug("Task executor shutdown...");
 		
 		// Verify task executor status
 		if(null != taskExecutor) {
@@ -200,7 +220,7 @@ public class VirtualOperator {
 		}
         
 		// Log shutdown
-		logger.info("Operator service terminated");		
+		logger.info("Virtual Operator terminated");		
 	}
 
 
