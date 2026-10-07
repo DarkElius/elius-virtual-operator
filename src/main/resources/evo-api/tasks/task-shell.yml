@@ -1,0 +1,26 @@
+info:
+  name: task-shell
+  type: http
+  seq: 3
+
+http:
+  method: PUT
+  url: "{{server}}/api/evo/task"
+  body:
+    type: json
+    data: |-
+      {
+        "status": "NEW",
+        "type": "EVO_SHELL",
+        "priority": "LOW",
+        "details": "test.sh",
+        "requester": "generic",
+        "owner": "foo"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

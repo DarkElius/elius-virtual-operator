@@ -1,0 +1,14 @@
+info:
+  name: locks
+  type: http
+
+http:
+  method: GET
+  url: "{{server}}/api/evo/lock"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

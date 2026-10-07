@@ -1,0 +1,26 @@
+info:
+  name: task-debug
+  type: http
+  seq: 2
+
+http:
+  method: PUT
+  url: "{{server}}/api/evo/task"
+  body:
+    type: json
+    data: |-
+      {
+        "status": "NEW",
+        "type": "EVO_DEBUG",
+        "priority": "LOW",
+        "details": "nothing",
+        "requester": "generic",
+        "owner": "foo"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

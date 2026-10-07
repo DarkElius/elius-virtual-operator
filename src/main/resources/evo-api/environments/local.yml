@@ -1,0 +1,8 @@
+name: local
+variables:
+  - name: server
+    value: http://localhost:8080
+  - name: username
+    value: myusername
+  - secret: true
+    name: password
