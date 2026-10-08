@@ -47,13 +47,16 @@ When the *Elius WebApp Framework* will be stable it'll be released on official M
 Run
 -----
 To start the application execute
- *java -jar -Dewa.config.path=/etc/evo/config target/EliusVirtualOperator-<release>.jar*
+ *java -jar -Dewa.config.path=/etc/evo/config -Devo.task.path=/etc/evo/tasks target/EliusVirtualOperator-<release>.jar*
 
 
 **Parameters**
 
  * **ewa.config.path**, set the resource directory complete path
        *i.e.: -Dewa.config.path=/etc/evo/config*
+
+ * **evo.task.path**, set the task directory complete path (plugins)
+       *i.e.: -Devo.task.path=/etc/evo/tasks*
        
 
  * **log4j.configurationFile**, Optional, set an external Apache Log4j2 xml configuration
