@@ -24,7 +24,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import elius.virtualoperator.VirtualOperator;
+import elius.virtualoperator.db.DBTables;
 import elius.webapp.framework.db.DBManager;
+import elius.webapp.framework.db.DBUtils;
 
 public class TaskDatabase {
 	
@@ -170,10 +172,13 @@ public class TaskDatabase {
 	 */
 	public int updateResult(UUID uuid, TaskStatus status, String result) {
 		// Log update task
-		logger.trace("Update task(" + uuid + ") set status(" + status.getName() + ") result(" + result + ")");
-			
+		logger.trace("Update task(" + uuid + ") set status(" + status.getName() + ") result(" + DBUtils.truncate(result, 64, true) + ")");
+		
+		// Check result lenght before update db
+		String chekedResult = DBUtils.truncate(result, DBTables.TASK_RESULT_MAX_LENGTH, true);
+
 		// Check the update result
-		if (db.update(SQL_UPDATE_RESULT, status.getId(), result, uuid.toString()) > 0) {
+		if (db.update(SQL_UPDATE_RESULT, status.getId(), chekedResult, uuid.toString()) > 0) {
 			// Log the error
 			logger.error("No rows uptdated");
 			// Return error

@@ -21,6 +21,13 @@ import elius.virtualoperator.VirtualOperator;
 import elius.webapp.framework.db.DBManager;
 
 public class DBTables {
+
+	// Task details, max length
+	public static final int TASK_DETAILS_MAX_LENGTH = 1024;
+	// Task result, max length
+	public static final int TASK_RESULT_MAX_LENGTH = 4096;
+
+
 	// Get Logger
 	private static Logger logger = LogManager.getLogger(DBTables.class);
 	
@@ -49,12 +56,14 @@ public class DBTables {
 															+ ", STATUS INTEGER NOT NULL DEFAULT 0"
 															+ ", TYPE VARCHAR(128) NOT NULL DEFAULT ''"
 															+ ", PRIORITY INTEGER NOT NULL DEFAULT 0"
-															+ ", DETAILS VARCHAR(1024) NOT NULL DEFAULT ''"
-															+ ", RESULT VARCHAR(1024) NOT NULL DEFAULT ''"
+															+ ", DETAILS VARCHAR(" + TASK_DETAILS_MAX_LENGTH  + ") NOT NULL DEFAULT ''"
+															+ ", RESULT VARCHAR(" + TASK_RESULT_MAX_LENGTH  + ") NOT NULL DEFAULT ''"
 															+ ", REQUESTER VARCHAR(128) NOT NULL DEFAULT ''"
 															+ ", OWNER VARCHAR(128) NOT NULL DEFAULT ''"
 															+ ", PRIMARY KEY (ID))";
-	
+
+															
+
 	/**
 	 * Constructor
 	 */

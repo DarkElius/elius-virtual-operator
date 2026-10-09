@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 import elius.virtualoperator.VirtualOperator;
 import elius.virtualoperator.VirtualOperatorID;
+import elius.webapp.framework.db.DBUtils;
 
 public class TaskExecutor implements Runnable {
 
@@ -85,7 +86,7 @@ public class TaskExecutor implements Runnable {
 		dbTask.updateResult(task.getUuid(), task.getStatus(), task.getResult());
 
 		// Log end task
-		logger.debug("End - Task Id(" + task.getUuid() + ") Status(" + task.getStatus().getName() + ") Result(" + task.getResult() + ") Type(" + task.getType() + ") Priority(" + task.getPriority().getName() + ") Details(" + task.getDetails() + ")");
+		logger.debug("End - Task Id(" + task.getUuid() + ") Status(" + task.getStatus().getName() + ") Result(" + DBUtils.truncate(task.getResult(), 64, true) + ") Type(" + task.getType() + ") Priority(" + task.getPriority().getName() + ") Details(" + task.getDetails() + ")");
 
 	}
 
