@@ -56,30 +56,37 @@ public class TaskExecutor implements Runnable {
 		// Log task information
 		logger.debug("Start - Task Id(" + task.getUuid() + ") Status(" + task.getStatus().getName() + ") Type(" + task.getType() + ") Priority(" + task.getPriority().getName() + ") Details(" + task.getDetails() + ")");
 
-		// Update task owner with the real thread executor
-		dbTask.updateOwner(task.getUuid(), VirtualOperatorID.get());
-		
-		// Get Task Process for the specified task		
-		TaskProcess taskProcess = (TaskProcess)taskManager.findPlugin(task.getType());
+		try {
 
-		if(null != taskProcess) {
-
-			// Update task status
-			dbTask.updateStatus(task.getUuid(), TaskStatus.RUNNING);
-
-			// Execute task
-			taskProcess.execute(task);
-
-			// Update task info for log
-			task.setStatus(taskProcess.getTaskStatusResult());
-			task.setResult(taskProcess.getProcessResult());
-
-		} else {
+			// Update task owner with the real thread executor
+			dbTask.updateOwner(task.getUuid(), VirtualOperatorID.get());
 			
-			// Unable to process task
-			task.setStatus(TaskStatus.ERROR);
-			task.setResult("No Task Process found");
+			// Get Task Process for the specified task		
+			TaskProcess taskProcess = (TaskProcess)taskManager.findPlugin(task.getType());
 
+			if(null != taskProcess) {
+
+				// Update task status
+				dbTask.updateStatus(task.getUuid(), TaskStatus.RUNNING);
+
+				// Execute task
+				taskProcess.execute(task);
+
+				// Update task info for log
+				task.setStatus(taskProcess.getTaskStatusResult());
+				task.setResult(taskProcess.getProcessResult());
+
+			} else {
+				
+				// Unable to process task
+				task.setStatus(TaskStatus.ERROR);
+				task.setResult("No Task Process found");
+
+			}
+		} catch (Throwable t) {
+			task.setStatus(TaskStatus.ERROR);
+			task.setResult("Task failed unexpectedly, please check system logs");
+			logger.error("Task failed unexpectedly", t);
 		}
 
 		// Update message
