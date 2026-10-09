@@ -54,3 +54,14 @@ build.log
 # Task pluings
 # ==========================================
 src/main/resources/tasks/*
+
+# ==========================================
+# Task configurations
+# ==========================================
+src/main/resources/config/*
+
+# ==========================================
+# Keep application configurations
+# ==========================================
+!src/main/resources/config/ewa.properties
+!src/main/resources/config/evo.properties
