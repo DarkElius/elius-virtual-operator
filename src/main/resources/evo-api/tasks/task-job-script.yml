@@ -1,0 +1,26 @@
+info:
+  name: task-job-script
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{server}}/api/evo/task"
+  body:
+    type: json
+    data: |-
+      {
+        "status": "NEW",
+        "type": "EVO_JOB_SCRIPT",
+        "priority": "LOW",
+        "details": "{\"name\": \"wifi\", \"id\": \"\", \"started\": \"\", \"ended\": \"\", \"rc\": \"\", \"url\": \"\"}",
+        "requester": "generic",
+        "owner": "foo"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
