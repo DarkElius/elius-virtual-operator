@@ -28,6 +28,10 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+/**
+ * REST API resource interface for managing locks.
+ * Exposes endpoints under the {@code /evo/lock} path.
+ */
 @Path("/evo/lock")
 public class LockInterface {
 	
@@ -47,6 +51,11 @@ public class LockInterface {
 	}
 	
 	
+	/**
+     * Retrieves all stored locks from the database.
+     * 
+     * @return a JAX-RS Response containing the list of locks, No Content status if empty, or Internal Server Error on failure
+     */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response get() {

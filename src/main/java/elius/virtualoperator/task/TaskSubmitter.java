@@ -24,11 +24,22 @@ import org.apache.logging.log4j.Logger;
 
 
 import elius.virtualoperator.VirtualOperatorAttributes;
-import elius.virtualoperator.VirtualOperatorID;
+import elius.virtualoperator.VirtualOperatorId;
 import elius.virtualoperator.lock.LockManager;
 import elius.webapp.framework.properties.PropertiesManager;
 import elius.webapp.framework.properties.PropertiesManagerFactory;
 
+/**
+ * Periodic task scheduler responsible for fetching new work items from the database 
+ * and submitting them to the executor service for asynchronous execution.
+ * 
+ * <p>This class implements {@link Runnable} and is designed to run at fixed intervals. 
+ * It manages thread concurrency limits, acquires distributed locks to prevent race conditions 
+ * across cluster nodes, and tracks active executions via future references.
+ * 
+ * @see TaskExecutor
+ * @see TaskDatabase
+ */
 public class TaskSubmitter implements Runnable {
 
 	// Get logger
@@ -79,6 +90,10 @@ public class TaskSubmitter implements Runnable {
 		lockManager.initialization();
 	}
 	
+	/**	
+	 * (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		// Log search start
@@ -107,7 +122,7 @@ public class TaskSubmitter implements Runnable {
 				for(Task t : tasks) {
 					
 					// Update task status and set the current owner that will change during task execution
-					dbTask.own(t.getUuid(), TaskStatus.OWNED, VirtualOperatorID.get());
+					dbTask.own(t.getUuid(), TaskStatus.OWNED, VirtualOperatorId.get());
 					
 					// Submit task for the execution
 					Future<?> f = executor.submit(new TaskExecutor(t));

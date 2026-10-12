@@ -21,8 +21,17 @@ import elius.webapp.framework.security.SecurityRedirectFilter;
 import elius.webapp.framework.security.authentication.AuthenticationFilter;
 import elius.webapp.framework.server.ServerConfig;
 
+/**
+ * Virtual Operator Main class.
+ */
 public class VirtualOperatorMain {
 
+	/**
+	 * Default constructor
+	 */
+	public VirtualOperatorMain() {
+	}
+    
     /**
      * Main program
      * @param args Program arguments

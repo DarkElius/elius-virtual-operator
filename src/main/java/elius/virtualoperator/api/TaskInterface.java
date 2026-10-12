@@ -31,6 +31,10 @@ import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+/**
+ * REST API resource interface for managing tasks.
+ * Exposes endpoints under the {@code /evo/task} path.
+ */
 @Path("/evo/task")
 public class TaskInterface extends Application {
 
@@ -48,7 +52,11 @@ public class TaskInterface extends Application {
 		dbTask = new TaskDatabase();
 	}
 	
-	
+	/**
+	 * Add new task to be executed
+	 * @param task Task
+	 * @return a JAX-RS Response indicating success (Created) or internal server error
+	 */
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response add(Task task) {
@@ -68,6 +76,11 @@ public class TaskInterface extends Application {
 	}
 	
 	
+	/**
+     * Retrieves all stored tasks from the database.
+     * 
+     * @return a JAX-RS Response containing the list of tasks, No Content status if empty, or Internal Server Error on failure
+     */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response get() {

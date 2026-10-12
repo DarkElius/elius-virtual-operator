@@ -19,6 +19,9 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+/**
+ * This class describe the lock object
+ */
 public class Lock {
 	
 	// Application name
@@ -27,7 +30,7 @@ public class Lock {
 	// Owner name
 	private String owner;
 	
-	// ID
+	// Id
 	private UUID uuid;
 	
 	// Acquired time stamp, when the lock is inserted
@@ -50,7 +53,7 @@ public class Lock {
 		// Initialize owner name
 		owner = "";
 		
-		// Generate an ID
+		// Generate an Id
 		uuid = UUID.randomUUID(); 
 		
 		// Initialize acquired time stamp
@@ -90,7 +93,7 @@ public class Lock {
 	
 	/**
 	 * Set owner name
-	 * @param Owner name
+	 * @param owner Owner name
 	 */
 	public void setOwner(String owner) {
 		this.owner = owner;
@@ -98,8 +101,8 @@ public class Lock {
 
 	
 	/**
-	 * Get ID
-	 * @return ID
+	 * Get Id
+	 * @return Id
 	 */
 	public UUID getUuid() {
 		return uuid;
@@ -107,8 +110,8 @@ public class Lock {
 
 	
 	/**
-	 * Set ID
-	 * @param ID
+	 * Set Id
+	 * @param uuid Id
 	 */
 	public void setUuid(UUID uuid) {
 		this.uuid = uuid;

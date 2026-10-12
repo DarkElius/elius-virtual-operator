@@ -23,16 +23,19 @@ import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import elius.virtualoperator.db.DBTables;
+import elius.virtualoperator.db.DbTables;
 import elius.virtualoperator.task.TaskManager;
 import elius.virtualoperator.task.TaskSubmitter;
 import elius.webapp.framework.application.ApplicationLifecycle;
-import elius.webapp.framework.db.DBEngine;
+import elius.webapp.framework.db.DbEngine;
 import elius.webapp.framework.properties.PropertiesManager;
 import elius.webapp.framework.properties.PropertiesManagerFactory;
 
 import javax.sql.DataSource;
 
+/**
+ * Manage the Virtual Operator application lifecycle.
+ */
 public class VirtualOperator implements ApplicationLifecycle {
 
     private static VirtualOperator instance;
@@ -57,7 +60,7 @@ public class VirtualOperator implements ApplicationLifecycle {
 
 
 	// Database
-    private final DBEngine dbEngine = new DBEngine();
+    private final DbEngine dbEngine = new DbEngine();
     private static DataSource dataSource;	
 
 	/**
@@ -80,7 +83,7 @@ public class VirtualOperator implements ApplicationLifecycle {
 
 	/**
 	 * Static global get datasource 
-	 * @return DB Datasource
+	 * @return Db Datasource
 	 */
     public static DataSource getDataSource() {
         return dataSource;
@@ -111,7 +114,7 @@ public class VirtualOperator implements ApplicationLifecycle {
 			logger.debug("Database initialization request received");
 			
 			// Application database instance
-			DBTables dbTask = new DBTables();
+			DbTables dbTask = new DbTables();
 			
 			// Database Initialization
 			if (0 != dbTask.init()) {

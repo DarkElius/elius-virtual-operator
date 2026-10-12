@@ -18,9 +18,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import elius.virtualoperator.VirtualOperator;
-import elius.virtualoperator.VirtualOperatorID;
-import elius.webapp.framework.db.DBUtils;
+import elius.virtualoperator.VirtualOperatorId;
+import elius.webapp.framework.db.DbUtils;
 
+/**
+ * Asynchronous worker task responsible for executing individual task items 
+ * inside separate threads managed by the executor service.
+ * 
+ * <p>This class handles runtime state updates, dynamic plugin resolution via the 
+ * task manager, execution safety checks with robust exception handling, and persistence 
+ * of final outcomes back to the database.
+ * 
+ * @see TaskSubmitter
+ * @see TaskProcess
+ */
 public class TaskExecutor implements Runnable {
 
 	// Get logger
@@ -51,6 +62,9 @@ public class TaskExecutor implements Runnable {
 	}
 	
 	
+	/**	(non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {	
 		// Log task information
@@ -59,7 +73,7 @@ public class TaskExecutor implements Runnable {
 		try {
 
 			// Update task owner with the real thread executor
-			dbTask.updateOwner(task.getUuid(), VirtualOperatorID.get());
+			dbTask.updateOwner(task.getUuid(), VirtualOperatorId.get());
 			
 			// Get Task Process for the specified task		
 			TaskProcess taskProcess = (TaskProcess)taskManager.findPlugin(task.getType());
@@ -93,7 +107,7 @@ public class TaskExecutor implements Runnable {
 		dbTask.updateResult(task.getUuid(), task.getStatus(), task.getResult());
 
 		// Log end task
-		logger.debug("End - Task Id(" + task.getUuid() + ") Status(" + task.getStatus().getName() + ") Result(" + DBUtils.truncate(task.getResult(), 64, true) + ") Type(" + task.getType() + ") Priority(" + task.getPriority().getName() + ") Details(" + task.getDetails() + ")");
+		logger.debug("End - Task Id(" + task.getUuid() + ") Status(" + task.getStatus().getName() + ") Result(" + DbUtils.truncate(task.getResult(), 64, true) + ") Type(" + task.getType() + ") Priority(" + task.getPriority().getName() + ") Details(" + task.getDetails() + ")");
 
 	}
 

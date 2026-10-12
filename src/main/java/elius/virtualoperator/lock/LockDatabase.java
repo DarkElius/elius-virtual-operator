@@ -24,15 +24,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import elius.virtualoperator.VirtualOperator;
-import elius.webapp.framework.db.DBManager;
+import elius.webapp.framework.db.DbManager;
 
+/**
+ * This class manages locks inside the virtual operator for the threads that execute task.
+ */
 public class LockDatabase {
 	
 	// Get logger
 	private static Logger logger = LogManager.getLogger(LockDatabase.class);
 	
 	// Database interface
-	private DBManager db;
+	private DbManager db;
 	
 	// Insert lock in the distributed lock table
 	private static final String SQL_INSERT = "INSERT INTO DISTRIBUTED_LOCK (APPLICATION, OWNER, ID, ACQUIRE, EXPIRE) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?)";
@@ -55,7 +58,7 @@ public class LockDatabase {
 	 */
 	public LockDatabase() {
 		// Initialize database manager with the virtual operator data-source name
-		db = new DBManager(VirtualOperator.getDataSource());
+		db = new DbManager(VirtualOperator.getDataSource());
 	}
 	
 	
@@ -104,6 +107,7 @@ public class LockDatabase {
 	
 	/**
 	 * Get lock information for selected application
+	 * @param application Application
 	 * @return Lock or null in case of errors or if it's not present
 	 */
 	public Lock get(String application) {

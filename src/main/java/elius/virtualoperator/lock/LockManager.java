@@ -20,10 +20,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import elius.virtualoperator.VirtualOperatorAttributes;
-import elius.virtualoperator.VirtualOperatorID;
+import elius.virtualoperator.VirtualOperatorId;
 import elius.webapp.framework.properties.PropertiesManager;
 import elius.webapp.framework.properties.PropertiesManagerFactory;
 
+/**
+ * Manager to acquire or release locks on database.
+ */
 public class LockManager {
 
 	// Get logger
@@ -88,7 +91,7 @@ public class LockManager {
 			// Empty Owner
 			lock.setOwner("");
 			
-			// Other parameters like ID and time stamps are already initialized by the constructor
+			// Other parameters like Id and time stamps are already initialized by the constructor
 			
 			// Insert empty lock
 			if (dbLock.insert(lock) > 0) {
@@ -124,7 +127,7 @@ public class LockManager {
 	public int lock() {
 		
 		// Set owner: try to put much information possible to identify the process
-		lock.setOwner(VirtualOperatorID.get());
+		lock.setOwner(VirtualOperatorId.get());
 		
 		// Set expire date to understand when the lock could be considered invalid
 		lock.setExpire(new Timestamp(System.currentTimeMillis() + (expire * 1000)));

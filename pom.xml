@@ -6,6 +6,27 @@
 	<artifactId>EliusVirtualOperator</artifactId>
 	<version>0.0.2</version>
 
+	<licenses>
+		<license>
+			<name>The Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Elia Milioni</name>
+			<organization>DarkElius</organization>
+			<organizationUrl>https://github.com/DarkElius</organizationUrl>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:https://github.com/DarkElius/elius-virtual-operator.git</connection>
+		<developerConnection>scm:git:https://github.com/DarkElius/elius-virtual-operator.git</developerConnection>
+		<url>https://github.com/DarkElius/elius-virtual-operator/tree/master</url>
+	</scm>
+
 	<build>
 		<plugins>
 			<!-- Compiler -->
@@ -16,6 +37,8 @@
 					<release>21</release>
 				</configuration>
 			</plugin>
+
+			<!-- Fat Jar -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
@@ -53,6 +76,36 @@
 									implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
 							</transformers>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Java Source -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.4.0</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Java Doc -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.12.0</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>

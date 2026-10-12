@@ -18,21 +18,24 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import elius.virtualoperator.VirtualOperator;
-import elius.webapp.framework.db.DBManager;
+import elius.webapp.framework.db.DbManager;
 
-public class DBTables {
+/**
+ * Drop / create virtual operator tables.
+ */
+public class DbTables {
 
-	// Task details, max length
+	/** Task details, max length */
 	public static final int TASK_DETAILS_MAX_LENGTH = 1024;
-	// Task result, max length
+	/** Task result, max length */
 	public static final int TASK_RESULT_MAX_LENGTH = 4096;
 
 
 	// Get Logger
-	private static Logger logger = LogManager.getLogger(DBTables.class);
+	private static Logger logger = LogManager.getLogger(DbTables.class);
 	
 	// Database interface
-	private DBManager db;
+	private DbManager db;
 	
 	// Drop table LOCK
 	private static final String SQL_TABLE_DISTRIBUTED_LOCK_DROP = "DROP TABLE DISTRIBUTED_LOCK";
@@ -67,8 +70,8 @@ public class DBTables {
 	/**
 	 * Constructor
 	 */
-	public DBTables() {
-		db = new DBManager(VirtualOperator.getDataSource());
+	public DbTables() {
+		db = new DbManager(VirtualOperator.getDataSource());
 	}
 	
 	

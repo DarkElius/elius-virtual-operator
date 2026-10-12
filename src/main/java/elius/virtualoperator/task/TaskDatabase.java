@@ -24,17 +24,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import elius.virtualoperator.VirtualOperator;
-import elius.virtualoperator.db.DBTables;
-import elius.webapp.framework.db.DBManager;
-import elius.webapp.framework.db.DBUtils;
+import elius.virtualoperator.db.DbTables;
+import elius.webapp.framework.db.DbManager;
+import elius.webapp.framework.db.DbUtils;
 
+/**
+ * This class give the functions to manages taks inside the database.
+ */
 public class TaskDatabase {
 	
 	// Get logger
 	private static Logger logger = LogManager.getLogger(TaskDatabase.class);
 	
 	// Database interface
-	private DBManager db;
+	private DbManager db;
 	
 	// Insert task in the TaskQueue table
 	private static final String SQL_INSERT = "INSERT INTO TASK_QUEUE (ID, STATUS, TYPE, PRIORITY, DETAILS, REQUESTER, OWNER) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -67,7 +70,7 @@ public class TaskDatabase {
 	 * Constructor
 	 */
 	public TaskDatabase() {
-		db = new DBManager(VirtualOperator.getDataSource());
+		db = new DbManager(VirtualOperator.getDataSource());
 	}
 	
 	/**
@@ -172,10 +175,10 @@ public class TaskDatabase {
 	 */
 	public int updateResult(UUID uuid, TaskStatus status, String result) {
 		// Log update task
-		logger.trace("Update task(" + uuid + ") set status(" + status.getName() + ") result(" + DBUtils.truncate(result, 64, true) + ")");
+		logger.trace("Update task(" + uuid + ") set status(" + status.getName() + ") result(" + DbUtils.truncate(result, 64, true) + ")");
 		
 		// Check result lenght before update db
-		String chekedResult = DBUtils.truncate(result, DBTables.TASK_RESULT_MAX_LENGTH, true);
+		String chekedResult = DbUtils.truncate(result, DbTables.TASK_RESULT_MAX_LENGTH, true);
 
 		// Check the update result
 		if (db.update(SQL_UPDATE_RESULT, status.getId(), chekedResult, uuid.toString()) > 0) {
