@@ -58,10 +58,9 @@ public class VirtualOperator implements ApplicationLifecycle {
 	// Task Manager
 	private TaskManager taskManager;
 
-
 	// Database
     private final DbEngine dbEngine = new DbEngine();
-    private static DataSource dataSource;	
+
 
 	/**
 	 * Coonstructor
@@ -71,13 +70,6 @@ public class VirtualOperator implements ApplicationLifecycle {
 		appProperties = PropertiesManagerFactory.getInstance(VirtualOperatorAttributes.EVO_PROPERTIES_FILE);		
     }
 
-	/**
-	 * Static global get datasource 
-	 * @return Db Datasource
-	 */
-    public static DataSource getDataSource() {
-        return dataSource;
-    }	
 
     @Override
     public void onStartup() throws LifecycleException {
@@ -174,6 +166,12 @@ public class VirtualOperator implements ApplicationLifecycle {
 
         // Shutdown Task Executor
         shutdownExecutor(taskExecutor, null, "Task executor");
+
+		// Close pool
+		dbEngine.closePool();
+
+		// Clear context reference
+        ApplicationContext.clear();
 
         // Log shutdown complete
         logger.info("Virtual Operator terminated");     

@@ -21,11 +21,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.sql.DataSource;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import elius.virtualoperator.VirtualOperator;
 import elius.virtualoperator.db.DbTables;
+import elius.webapp.framework.application.ApplicationContext;
 import elius.webapp.framework.db.DbManager;
 import elius.webapp.framework.db.DbUtils;
 
@@ -71,7 +74,7 @@ public class TaskDatabase {
 	 * Constructor
 	 */
 	public TaskDatabase() {
-		db = new DbManager(VirtualOperator.getDataSource());
+		db = new DbManager(ApplicationContext.get(DataSource.class));
 	}
 	
 	/**
