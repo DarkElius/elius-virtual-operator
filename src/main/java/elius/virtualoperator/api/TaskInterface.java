@@ -61,15 +61,12 @@ public class TaskInterface extends Application {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response add(Task task) {
 		
-		// Log request received
-		logger.trace("Task add-to-queue request received");
-		
 		// Add task to queue
 		if (0 != dbTask.add(task))
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 
 		// Log request successfully
-		logger.trace("New Task added to queue");
+		logger.trace("New task={} added to queue", task);
 		
 		// Return Created
 		return Response.status(Response.Status.CREATED).build();
@@ -85,9 +82,6 @@ public class TaskInterface extends Application {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response get() {
 		
-		// Log request received
-		logger.trace("Task get request received");
-		
 		// Fetch task from database
 		List<Task> tasks = dbTask.getAll(999);
 		
@@ -99,9 +93,6 @@ public class TaskInterface extends Application {
 			// Return error
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();			
 		}
-	
-		// Log request successfully
-		logger.trace("Task fetched");
 		
 		// Return created
 		return Response.ok().entity(tasks).build();

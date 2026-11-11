@@ -96,8 +96,6 @@ public class TaskSubmitter implements Runnable {
 	 */
 	@Override
 	public void run() {
-		// Log search start
-		logger.debug("Submitter started");
 			
 		// Set task number to own 
 		int nTasksToOwn = appProperties.getInt(VirtualOperatorAttributes.PROP_TASK_SUBMITTER_TASK_TO_OWN, VirtualOperatorAttributes.DEFAULT_TASK_SUBMITTER_TASK_TO_OWN);
@@ -139,11 +137,7 @@ public class TaskSubmitter implements Runnable {
 			// Log that no task will be owned because the old one are still running
 			logger.debug("Old process are still running");
 		}
-	
 
-		
-		// Log search start
-		logger.debug("Submitter ended");	
 	}
 
 	
