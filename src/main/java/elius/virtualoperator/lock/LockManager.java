@@ -33,16 +33,13 @@ public class LockManager {
 	private static Logger logger = LogManager.getLogger(LockManager.class);
 	
 	// Lock database access
-	private LockDatabase dbLock;
+	private final LockDatabase dbLock;
 	
 	// Lock instance
-	private Lock lock;
+	private final Lock lock;
 	
 	// Properties file
-	private PropertiesManager appProperties;
-	
-	// Application name
-	private String application;
+	private final PropertiesManager appProperties;
 	
 	// Expire in seconds
 	private int expire;
@@ -81,7 +78,7 @@ public class LockManager {
 		logger.info("Initialize Lock Manager");
 		
 		// Get application name
-		application = appProperties.get(VirtualOperatorAttributes.PROP_LOCK_MANAGER_APPLICATION, VirtualOperatorAttributes.DEFAULT_LOCK_MANAGER_APPLICATION);
+		String application = appProperties.get(VirtualOperatorAttributes.PROP_LOCK_MANAGER_APPLICATION, VirtualOperatorAttributes.DEFAULT_LOCK_MANAGER_APPLICATION);
 		
 		// Search if there are other records for the same application
 		if(null == dbLock.get(application)) {
@@ -96,10 +93,10 @@ public class LockManager {
 			// Insert empty lock
 			if (dbLock.insert(lock) > 0) {
 				// Log successful
-				logger.info("Log Manager initialized for selected application(" + application + ")");
+				logger.info("Log Manager initialized for selected application={}", application);
 			} else {
 				// Log lock already present
-				logger.warn("Log Manager already initialized for selected application(" + application + ")");
+				logger.warn("Log Manager already initialized for selected application={}", application);
 			}
 		}
 		
@@ -133,7 +130,7 @@ public class LockManager {
 		lock.setExpire(new Timestamp(System.currentTimeMillis() + (expire * 1000)));
 
 		// Log start acquiring lock
-		logger.trace("Acquiring lock, owner(" + lock.getOwner() + ")");
+		logger.trace("Acquiring lock, owner={}", lock.getOwner());
 		
 		boolean locked = false;
 		
@@ -141,7 +138,7 @@ public class LockManager {
 		for (int i = 0; (i < maxRetry) && (!locked); i++) {
 			
 			// Log tentative
-			logger.trace("Try to get lock, tentative " + (i + 1) + " of " + maxRetry);
+			logger.trace("Try to get lock, tentative {} of {}", (i + 1), maxRetry);
 			
 			// Try to get lock
 			if(0 == dbLock.update(lock)) {
@@ -150,17 +147,19 @@ public class LockManager {
 				locked = true;
 
 				// Log success
-				logger.debug("Lock acquired by owner(" + lock.getOwner() + ")");
+				logger.debug("Lock acquired by owner={}", lock.getOwner());
 				
 			} else {
 				try {
 					
 					// Wait in seconds
-					Thread.sleep(maxRetrySleep * 1000);
+					Thread.sleep(maxRetrySleep * 1000L);
 					
 				} catch (InterruptedException e) {
 					// Log error
-					logger.error("Error during sleeping between lock tentatives");
+					logger.error("Error during sleeping between lock tentatives", e);
+					/* Clean up whatever needs to be handled before interrupting  */
+					Thread.currentThread().interrupt();
 				}
 			}		
 		}
@@ -168,7 +167,7 @@ public class LockManager {
 		// Lock not acquired
 		if(!locked) {
 			// Not an error or warning because it depends on the configuration and architecture design: set on debug messages
-			logger.debug("Lock not acquired by owner(" + lock.getOwner() + ")");
+			logger.debug("Lock not acquired by owner={}", lock.getOwner());
 			// Exit with not acquired
 			return 1;
 		}
@@ -184,19 +183,19 @@ public class LockManager {
 	 */
 	public int unlock() {
 		// Log start removing lock
-		logger.trace("Removing lock, owner(" + lock.getOwner() + ")");
+		logger.trace("Removing lock, owner={}", lock.getOwner());
 
 		// Release the lock
 		if (0 != dbLock.free(lock)) {
 			// Log warning
-			logger.error("Failed to unlock, owner(" + lock.getOwner() + ")");
+			logger.error("Failed to unlock, owner={}", lock.getOwner());
 			
 			// Return warning
 			return 1;
 		}
 		
 		// Log success
-		logger.debug("Unlocked, owner(" + lock.getOwner() + ")");
+		logger.debug("Unlocked, owner={}", lock.getOwner());
 		
 		return 0;
 	}

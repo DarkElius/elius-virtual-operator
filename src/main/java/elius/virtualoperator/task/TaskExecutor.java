@@ -17,8 +17,8 @@ package elius.virtualoperator.task;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import elius.virtualoperator.VirtualOperator;
 import elius.virtualoperator.VirtualOperatorId;
+import elius.webapp.framework.application.ApplicationContext;
 import elius.webapp.framework.db.DbUtils;
 
 /**
@@ -38,7 +38,7 @@ public class TaskExecutor implements Runnable {
 	private static Logger logger = LogManager.getLogger(TaskExecutor.class);
 	
 	// Task Database
-	private TaskDatabase dbTask;
+	private final TaskDatabase dbTask;
 	
 	// Task pointer
 	Task task;
@@ -58,7 +58,7 @@ public class TaskExecutor implements Runnable {
 		dbTask = new TaskDatabase();
 
 		// Task Manager
-		taskManager = VirtualOperator.getInstance().getTaskManager();
+		taskManager = ApplicationContext.get(TaskManager.class);
 	}
 	
 	
@@ -68,7 +68,7 @@ public class TaskExecutor implements Runnable {
 	@Override
 	public void run() {	
 		// Log task information
-		logger.debug("Start - Task Id(" + task.getUuid() + ") Status(" + task.getStatus().getName() + ") Type(" + task.getType() + ") Priority(" + task.getPriority().getName() + ") Details(" + task.getDetails() + ")");
+		logger.traceEntry("{}", task);
 
 		try {
 
@@ -97,17 +97,19 @@ public class TaskExecutor implements Runnable {
 				task.setResult("No Task Process found");
 
 			}
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			task.setStatus(TaskStatus.ERROR);
 			task.setResult("Task failed unexpectedly, please check system logs");
-			logger.error("Task failed unexpectedly", t);
+			logger.error("Task failed unexpectedly", e);
 		}
 
 		// Update message
 		dbTask.updateResult(task.getUuid(), task.getStatus(), task.getResult());
 
 		// Log end task
-		logger.debug("End - Task Id(" + task.getUuid() + ") Status(" + task.getStatus().getName() + ") Result(" + DbUtils.truncate(task.getResult(), 64, true) + ") Type(" + task.getType() + ") Priority(" + task.getPriority().getName() + ") Details(" + task.getDetails() + ")");
+		if(logger.isDebugEnabled()) {
+			logger.debug("End - task={} result={}", task, DbUtils.truncate(task.getResult(), 64, true));
+		}
 
 	}
 

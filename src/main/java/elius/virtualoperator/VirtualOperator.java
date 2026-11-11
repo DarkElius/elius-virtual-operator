@@ -27,7 +27,9 @@ import elius.virtualoperator.db.DbTables;
 import elius.virtualoperator.task.TaskManager;
 import elius.virtualoperator.task.TaskSubmitter;
 import elius.webapp.framework.application.ApplicationLifecycle;
+import elius.webapp.framework.application.ApplicationContext;
 import elius.webapp.framework.db.DbEngine;
+import elius.webapp.framework.exceptions.LifecycleException;
 import elius.webapp.framework.properties.PropertiesManager;
 import elius.webapp.framework.properties.PropertiesManagerFactory;
 
@@ -37,8 +39,6 @@ import javax.sql.DataSource;
  * Manage the Virtual Operator application lifecycle.
  */
 public class VirtualOperator implements ApplicationLifecycle {
-
-    private static VirtualOperator instance;
 
 	// Get logger
 	private static Logger logger = LogManager.getLogger(VirtualOperator.class);
@@ -53,7 +53,7 @@ public class VirtualOperator implements ApplicationLifecycle {
 	private ScheduledFuture<?> scheduledFuture;
 	
 	// Properties file
-	private PropertiesManager appProperties;
+	private final PropertiesManager appProperties;
 
 	// Task Manager
 	private TaskManager taskManager;
@@ -67,18 +67,8 @@ public class VirtualOperator implements ApplicationLifecycle {
 	 * Coonstructor
 	 */
     public VirtualOperator() {
-        instance = this;
-		
 		// Application properties
 		appProperties = PropertiesManagerFactory.getInstance(VirtualOperatorAttributes.EVO_PROPERTIES_FILE);		
-    }
-
-	/**
-	 * Get Virtual Operator instance
-	 * @return Virtual Operator instance
-	 */
-    public static VirtualOperator getInstance() {
-        return instance;
     }
 
 	/**
@@ -90,7 +80,7 @@ public class VirtualOperator implements ApplicationLifecycle {
     }	
 
     @Override
-    public void onStartup() throws Exception {
+    public void onStartup() throws LifecycleException {
 		// Log initialization
 		logger.debug("Virtual Operator initialization...");
 
@@ -100,12 +90,12 @@ public class VirtualOperator implements ApplicationLifecycle {
 		String dsPassword = appProperties.get(VirtualOperatorAttributes.PROP_DATABASE_DATASOURCE_PASSWORD);
 		int dsMaxPoolSize = appProperties.getInt(VirtualOperatorAttributes.PROP_DATABASE_DATASOURCE_MAXPOOLSIZE, VirtualOperatorAttributes.DEFAULT_DATABASE_DATASOURCE_MAXPOOLSIZE);
 
-        dataSource = dbEngine.createPool(
+		ApplicationContext.register(DataSource.class, dbEngine.createPool(
             dsUrl,
             dsUsername, 
             dsPassword, 
             dsMaxPoolSize
-        );
+        ));
 		
 		// Initialize database (drop/create) if required
 		if("Y".equalsIgnoreCase(appProperties.get(VirtualOperatorAttributes.PROP_DATABASE_INIT_ON_BOOT))) {
@@ -163,6 +153,8 @@ public class VirtualOperator implements ApplicationLifecycle {
 		taskManager = new TaskManager();
 		try {
 			taskManager.loadPlugins(appProperties.get(VirtualOperatorAttributes.PROP_TASK_PROCESS_PATH));
+			// Save TaskManager to application context
+			ApplicationContext.register(TaskManager.class, taskManager);
 		} catch (Exception e) {
 			logger.catching(e);
 		}
@@ -172,59 +164,56 @@ public class VirtualOperator implements ApplicationLifecycle {
 	}
 	
 	
-    @Override
-    public void onShutdown() throws Exception {
-		// Log shutdown
-		logger.debug("Virtual Operator shutdown...");
+	@Override
+    public void onShutdown() throws LifecycleException {
+        // Log shutdown start
+        logger.debug("Virtual Operator shutdown...");
 
-		// Log scheduler shutdown
-		logger.debug("Scheduler shutdown...");
-		
-		// Verify scheduler status
-		if(null != scheduler) {
-			
-			// Log a message if the scheduler service was crashed
-			if(scheduledFuture.isDone())
-				logger.warn("Scheduler service was not running before shutdown");
-			
-			// Shutdown scheduler
-	        scheduler.shutdown();
-	        
-	        // Wait for the end
-	        while (!scheduler.isTerminated()) {
-	        }
-	        
-			// Log scheduler shutdown
-			logger.debug("Scheduler terminated");			
-		} else {
-			// Log missing scheduler
-			logger.warn("Scheduler inactive");
-		}
+        // Shutdown Scheduler
+        shutdownExecutor(scheduler, scheduledFuture, "Scheduler");
 
+        // Shutdown Task Executor
+        shutdownExecutor(taskExecutor, null, "Task executor");
 
-		// Log scheduler shutdown
-		logger.debug("Task executor shutdown...");
-		
-		// Verify task executor status
-		if(null != taskExecutor) {
+        // Log shutdown complete
+        logger.info("Virtual Operator terminated");     
+    }
 
-			// Shutdown task executor
-			taskExecutor.shutdown();
-        
-			// Wait for the end
-			while (!taskExecutor.isTerminated()) {
-			}
-        
-			// Log task executor shutdown
-			logger.debug("Task executor terminated");
-		} else {
-			// Log missing task executor
-			logger.warn("Task executor inactive");
-		}
-        
-		// Log shutdown
-		logger.info("Virtual Operator terminated");		
-	}
+    /**
+     * Safely shuts down an executor service with timeout and error handling.
+     *
+     * @param executor the executor service to shutdown
+     * @param future the optional scheduled future associated with the executor
+     * @param componentName the name of the component for logging
+     */
+    private void shutdownExecutor(ExecutorService executor, ScheduledFuture<?> future, String componentName) {
+        if (executor == null) {
+            logger.warn("{} inactive", componentName);
+            return;
+        }
+
+        // Log a message if the service was already done/crashed
+        if (future != null && future.isDone()) {
+            logger.warn("{} service was not running before shutdown", componentName);
+        }
+
+        // Shutdown service
+        executor.shutdown();
+
+        // Wait safely for termination (replaces empty while loop)
+        try {
+            if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+                logger.warn("{} did not terminate gracefully, forcing shutdown", componentName);
+            }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
+            logger.error("The {} termination was interrupted", componentName, e);
+        }
+
+        logger.debug("{} terminated", componentName);
+    }
 
 
 	/**

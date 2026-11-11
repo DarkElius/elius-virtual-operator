@@ -42,7 +42,7 @@ public class TaskInterface extends Application {
 	private static Logger logger = LogManager.getLogger(TaskInterface.class);
 	
 	// Task Database
-	private TaskDatabase dbTask;
+	private final TaskDatabase dbTask;
 	
 	/**
 	 * Constructor

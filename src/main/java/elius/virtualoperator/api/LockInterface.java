@@ -39,7 +39,7 @@ public class LockInterface {
 	private static Logger logger = LogManager.getLogger(LockInterface.class);
 	
 	// Lock database access
-	private LockDatabase dbLock;
+	private final LockDatabase dbLock;
 
 	
 	/**

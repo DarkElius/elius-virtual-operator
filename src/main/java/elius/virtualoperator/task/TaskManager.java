@@ -30,11 +30,12 @@ import elius.webapp.framework.plugin.PluginManager;
  */
 public class TaskManager extends PluginManager {
 
-	/**
-	 * Default constructor
-	 */
-	public TaskManager() {
-	}
+    /**
+     * Constructor
+     */
+    public TaskManager() {
+        /* Nothing to initialize */
+    }
 
     /**
      * Returns all loaded task processing plugins.
@@ -52,8 +53,8 @@ public class TaskManager extends PluginManager {
 
         for (Plugin plugin : getLoadedPlugins()) {
 
-            if (plugin instanceof TaskProcess) {
-                result.add((TaskProcess) plugin);
+            if (plugin instanceof TaskProcess p) {
+                result.add(p);
             }
         }
 

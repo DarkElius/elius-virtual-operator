@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>EliusVirtualOperator</groupId>
 	<artifactId>EliusVirtualOperator</artifactId>
-	<version>0.0.2</version>
+	<version>0.0.3</version>
 
 	<licenses>
 		<license>
@@ -140,8 +140,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<ewaf.version>0.0.2</ewaf.version>
-		<evot.version>0.0.2</evot.version>
+		<ewaf.version>0.0.3</ewaf.version>
+		<evot.version>0.0.3</evot.version>
 		<log4j.version>2.26.0</log4j.version>
 		<derby.version>10.16.1.1</derby.version>
 		<jackson.version>2.16.1</jackson.version>
@@ -224,4 +224,35 @@
 		</dependency>
 
 	</dependencies>
+
+    <profiles>
+		<!-- SonarQube -->
+        <profile>
+            <id>sonar</id>
+            <properties>
+				<sonar.projectKey>elius-virtual-operator</sonar.projectKey>
+				<sonar.projectName>elius-virtual-operator</sonar.projectName>
+                
+				<sonar.host.url>${env.SONAR_HOST_URL}</sonar.host.url>
+				<sonar.host.token>${env.SONAR_TOKEN}</sonar.host.token>
+
+				<sonar.plugin.version>5.8.0.7211</sonar.plugin.version>
+				<sonar.scanner.skipJreProvisioning>true</sonar.scanner.skipJreProvisioning>
+				<sonar.cpd.exclusions>**/*.html</sonar.cpd.exclusions>
+				<sonar.java.binaries>target</sonar.java.binaries>		
+            </properties>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.sonarsource.scanner.maven</groupId>
+						<artifactId>sonar-maven-plugin</artifactId>
+						<version>${sonar.plugin.version}</version>
+					</plugin>					
+				</plugins>
+			</build>
+        </profile>
+		
+    </profiles>
+
 </project>

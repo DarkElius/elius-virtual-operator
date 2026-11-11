@@ -93,6 +93,6 @@ public class VirtualOperatorAttributes {
 	/**
 	 * Default constructor
 	 */
-	public VirtualOperatorAttributes() {
+	private VirtualOperatorAttributes() {
 	}	
 }

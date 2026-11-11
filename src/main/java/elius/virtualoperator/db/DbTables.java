@@ -35,7 +35,7 @@ public class DbTables {
 	private static Logger logger = LogManager.getLogger(DbTables.class);
 	
 	// Database interface
-	private DbManager db;
+	private final DbManager db;
 	
 	// Drop table LOCK
 	private static final String SQL_TABLE_DISTRIBUTED_LOCK_DROP = "DROP TABLE DISTRIBUTED_LOCK";

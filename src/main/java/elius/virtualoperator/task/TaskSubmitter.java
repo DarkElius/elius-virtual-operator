@@ -46,19 +46,19 @@ public class TaskSubmitter implements Runnable {
 	private static Logger logger = LogManager.getLogger(TaskSubmitter.class);
 	
 	// Task Database
-	private TaskDatabase dbTask;
+	private final TaskDatabase dbTask;
 	
 	// Pointer to the executor service
-	private ExecutorService executor;
+	private final ExecutorService executor;
 	
 	// The current list of task submitted by the executor
-	private List<Future<?>> cFutures;
+	private final List<Future<?>> cFutures;
 	
 	// Property file
-	private PropertiesManager appProperties;
+	private final PropertiesManager appProperties;
 	
 	// Lock Manager
-	private LockManager lockManager;
+	private final LockManager lockManager;
 	
 	
 	/**

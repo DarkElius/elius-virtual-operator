@@ -16,6 +16,7 @@ package elius.virtualoperator.task;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -37,7 +38,7 @@ public class TaskDatabase {
 	private static Logger logger = LogManager.getLogger(TaskDatabase.class);
 	
 	// Database interface
-	private DbManager db;
+	private final DbManager db;
 	
 	// Insert task in the TaskQueue table
 	private static final String SQL_INSERT = "INSERT INTO TASK_QUEUE (ID, STATUS, TYPE, PRIORITY, DETAILS, REQUESTER, OWNER) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -80,7 +81,7 @@ public class TaskDatabase {
 	 */
 	public int add(Task task) {
 		// Log add task
-		logger.trace("Add task(" + task.getUuid().toString() + ")");
+		logger.trace("Add task={}", task.getUuid());
 
 		// Check the number of rows inserted
 		if (db.update(SQL_INSERT, task.getUuid().toString(), task.getStatus().getId(),
@@ -105,7 +106,7 @@ public class TaskDatabase {
 	 */
 	public int own(UUID uuid, TaskStatus status, String owner) {
 		// Log update task
-		logger.trace("Update task(" + uuid + ") set status(" + status.getName() + ") owner(" + owner + ")");
+		logger.trace("Update task={} set status={} owner={}", uuid, status.getName(), owner);
 
 		// Check the number of rows updated
 		if (db.update(SQL_UPDATE_OWN, status.getId(), owner, uuid.toString()) > 0) {
@@ -128,7 +129,7 @@ public class TaskDatabase {
 	 */
 	public int updateOwner(UUID uuid, String owner) {
 		// Log update task
-		logger.trace("Update task(" + uuid + ") set owner(" + owner + ")");
+		logger.trace("Update task={} set owner={}", uuid, owner);
 
 		// Check the number of rows updated
 		if (db.update(SQL_UPDATE_OWNER, owner, uuid.toString()) > 0) {
@@ -151,7 +152,7 @@ public class TaskDatabase {
 	 */
 	public int updateStatus(UUID uuid, TaskStatus status) {
 		// Log update task
-		logger.trace("Update task(" + uuid + ") set status(" + status.getName() + ")");
+		logger.trace("Update task={} set status={}", uuid, status.getName());
 
 		// Check the number of rows updated
 		if (db.update(SQL_UPDATE_STATUS, status.getId(), uuid.toString()) > 0) {
@@ -175,7 +176,9 @@ public class TaskDatabase {
 	 */
 	public int updateResult(UUID uuid, TaskStatus status, String result) {
 		// Log update task
-		logger.trace("Update task(" + uuid + ") set status(" + status.getName() + ") result(" + DbUtils.truncate(result, 64, true) + ")");
+		if(logger.isTraceEnabled()) {
+			logger.trace("Update task={} set status={} result={}", uuid, status.getName(), DbUtils.truncate(result, 64, true));
+		}
 		
 		// Check result lenght before update db
 		String chekedResult = DbUtils.truncate(result, DbTables.TASK_RESULT_MAX_LENGTH, true);
@@ -230,7 +233,7 @@ public class TaskDatabase {
 			// Log the error
 			logger.error("No rows fetched");
 			// Return error
-			return null;
+			return Collections.emptyList();
 		}	
 
 		// List of tasks

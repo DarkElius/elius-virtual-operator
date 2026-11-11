@@ -16,6 +16,7 @@ package elius.virtualoperator.lock;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -35,7 +36,7 @@ public class LockDatabase {
 	private static Logger logger = LogManager.getLogger(LockDatabase.class);
 	
 	// Database interface
-	private DbManager db;
+	private final DbManager db;
 	
 	// Insert lock in the distributed lock table
 	private static final String SQL_INSERT = "INSERT INTO DISTRIBUTED_LOCK (APPLICATION, OWNER, ID, ACQUIRE, EXPIRE) VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?)";
@@ -69,7 +70,7 @@ public class LockDatabase {
 	 */
 	public int insert(Lock lock) {
 		// Log add task
-		logger.trace("Add lock Application(" + lock.getApplication() + ") + Owner(" + lock.getOwner() + ")");
+		logger.trace("Add lock Application={} + Owner={}", lock.getApplication(), lock.getOwner());
 
 		// Insert lock and check return code
 		if (0 != db.update(SQL_INSERT, lock.getApplication(), lock.getOwner(), lock.getUuid().toString(), lock.getExpire().toString())) {
@@ -136,7 +137,7 @@ public class LockDatabase {
 
 	/**
 	 * Get all locks
-	 * @return Lock list or null in case of errors
+	 * @return Lock list
 	 */
 	public List<Lock> getAll() {		
 		// Log start
@@ -150,7 +151,7 @@ public class LockDatabase {
 			// Log the error
 			logger.error("No rows fetched");
 			// Return error
-			return null;
+			return Collections.emptyList();
 		}	
 		
 		// List of tasks

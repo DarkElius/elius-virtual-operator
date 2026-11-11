@@ -25,7 +25,7 @@ public class VirtualOperatorId {
 	/**
 	 * Default constructor
 	 */
-	public VirtualOperatorId() {
+	private VirtualOperatorId() {
 	}    
 
     /**

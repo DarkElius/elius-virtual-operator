@@ -7,10 +7,10 @@ THIRD-PARTY LIBRARIES / NOTICES
 
 This product bundles or incorporates components from the following third-party projects:
 
-  - Task (EliusVirtualOperator:Task:0.0.2)
-    License: Unknown license
+  - Task (EliusVirtualOperator:Task:0.0.3)
+    License: The Apache License, Version 2.0
 
-  - EliusWebAppFramework (EliusWebAppFramework:EliusWebAppFramework:0.0.2)
+  - EliusWebAppFramework (EliusWebAppFramework:EliusWebAppFramework:0.0.3)
     License: The Apache License, Version 2.0
 
   - Jackson-annotations (com.fasterxml.jackson.core:jackson-annotations:2.16.1)

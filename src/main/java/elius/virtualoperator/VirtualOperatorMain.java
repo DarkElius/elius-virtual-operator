@@ -29,7 +29,7 @@ public class VirtualOperatorMain {
 	/**
 	 * Default constructor
 	 */
-	public VirtualOperatorMain() {
+	private VirtualOperatorMain() {
 	}
     
     /**
