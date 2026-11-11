@@ -26,7 +26,6 @@ import javax.sql.DataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import elius.virtualoperator.VirtualOperator;
 import elius.virtualoperator.db.DbTables;
 import elius.webapp.framework.application.ApplicationContext;
 import elius.webapp.framework.db.DbManager;
@@ -83,8 +82,6 @@ public class TaskDatabase {
 	 * @return 0 Successfully, 1 Error
 	 */
 	public int add(Task task) {
-		// Log add task
-		logger.trace("Add task={}", task.getUuid());
 
 		// Check the number of rows inserted
 		if (db.update(SQL_INSERT, task.getUuid().toString(), task.getStatus().getId(),
@@ -94,6 +91,8 @@ public class TaskDatabase {
 			// Return error
 			return 1;
 		}
+		// Log add task
+		logger.debug("task={} type={} added to queue", task.getUuid(), task.getType());
 		
 		// Return successfully
 		return 0;			
@@ -225,8 +224,6 @@ public class TaskDatabase {
 	 * @return TaskList or null in case of errors
 	 */
  	private List<Task> get(String sql, int nTasks) {
-		// Log add task
-		logger.trace("Get task");
 
 		// Result table
 		List<Map<String, Object>> table = db.executeQuery(sql, nTasks);

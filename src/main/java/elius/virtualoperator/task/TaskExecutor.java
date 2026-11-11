@@ -68,7 +68,7 @@ public class TaskExecutor implements Runnable {
 	@Override
 	public void run() {	
 		// Log task information
-		logger.traceEntry("{}", task);
+		logger.trace("task={}", task.getUuid());
 
 		try {
 

@@ -64,9 +64,6 @@ public class TaskInterface extends Application {
 		// Add task to queue
 		if (0 != dbTask.add(task))
 			return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-
-		// Log request successfully
-		logger.trace("New task={} added to queue", task);
 		
 		// Return Created
 		return Response.status(Response.Status.CREATED).build();
