@@ -26,7 +26,6 @@ import javax.sql.DataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import elius.virtualoperator.VirtualOperator;
 import elius.webapp.framework.application.ApplicationContext;
 import elius.webapp.framework.db.DbManager;
 
